@@ -107,6 +107,8 @@ public class AdvancementScript extends CommandScript {
         buildAdvancement();
     }
 
+    public AdvancementTree.Builder treeBuilder = null;
+
     public AdvancementTree tree = null;
 
     public Vector2d position;
@@ -167,15 +169,13 @@ public class AdvancementScript extends CommandScript {
         else {
             advancement = builder.build();
             String treeId = contents.getString("tree_id");
-            AdvancementTree.Builder treeBuilder = AdvancementTree.builder().id(treeId);
+            treeBuilder = AdvancementTree.builder().id(treeId);
             if (contents.contains("tree_name")) {
                 treeBuilder.name(contents.getString("tree_name"));
             }
             if (contents.contains("tree_background")) {
                 treeBuilder.background(contents.getString("tree_background"));
             }
-            treeBuilder.rootAdvancement(advancement);
-            tree = treeBuilder.build();
         }
         NumberTag x = NumberTag.getFor(Debug::error, contents.getString("x_position"));
         NumberTag y = NumberTag.getFor(Debug::error, contents.getString("y_position"));
@@ -183,12 +183,16 @@ public class AdvancementScript extends CommandScript {
     }
 
     public boolean isTreeRoot() {
-        return tree != null;
+        return treeBuilder != null;
     }
 
     @Listener
     public void onRegisterAdvancementTrees(GameRegistryEvent.Register<AdvancementTree> event) {
         if (isTreeRoot()) {
+            if (tree == null) {
+                treeBuilder.rootAdvancement(advancement);
+                tree = treeBuilder.build();
+            }
             event.register(tree);
             if (Denizen2Core.getImplementation().generalDebug()) {
                 Debug.good("Registering advancement tree '" + ColorSet.emphasis + tree.getId()
