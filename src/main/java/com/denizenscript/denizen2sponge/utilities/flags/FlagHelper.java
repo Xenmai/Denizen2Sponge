@@ -27,8 +27,8 @@ public class FlagHelper {
                 .dataClass(FlagMapDataImpl.class)
                 .immutableClass(ImmFlagMapDataImpl.class)
                 .builder(FMDB)
-                .manipulatorId("flagmap")
-                .dataName("flagmap")
-                .buildAndRegister(Denizen2Sponge.plugin);
+                .id("flagmap")
+                .name("flagmap")
+                .build();
     }
 }
